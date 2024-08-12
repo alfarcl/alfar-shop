@@ -62,6 +62,20 @@ const SideBarComponent = ({ activeButton, setActiveButton }: any) => {
           "py-10 my-5 cursor-pointer w-full"
         )}
       >
+        PRODUCT VARIANT
+      </Button>
+      <Button
+        color={activeButton === 4 ? "warning" : "primary"}
+        onClick={() => {
+          setActiveButton(4);
+        }}
+        size="lg"
+        variant="shadow"
+        className={clsx(
+          styles["sidebar-card-button"],
+          "py-10 my-5 cursor-pointer w-full"
+        )}
+      >
         TRANSACTION
       </Button>
     </div>

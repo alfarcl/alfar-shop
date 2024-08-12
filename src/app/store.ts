@@ -2,8 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { authReducer } from "../../store/authSlice";
 import { productCategoryReducer } from "../../store/productCategorySlice";
+import { productReducer } from "../../store/productSlice";
 export const store = configureStore({
-  reducer: { auth: authReducer, product_category: productCategoryReducer },
+  reducer: {
+    auth: authReducer,
+    product_category: productCategoryReducer,
+    product: productReducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
 });

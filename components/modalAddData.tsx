@@ -32,6 +32,11 @@ export default function ModalAddData({
   const productCategoryList = useMemo(() => {
     return state.product_category.product_category.data;
   }, [state]);
+  const productList = useMemo(() => {
+    return state.product?.product;
+  }, [state]);
+
+  console.log(state.product.product);
 
   const renderForm = (id: number) => {
     switch (id) {
@@ -99,11 +104,61 @@ export default function ModalAddData({
       case 3: //produk varian
         return (
           <>
-            <Input label="Nama Produk" variant="faded" />
-            <Input label="Nama Varian" variant="faded" />
-            <Input label="Kode" variant="faded" />
-            <Input label="Stok" variant="faded" />
-            <Input label="Harga" variant="faded" />
+            <Select label="Produk" className="max-w-xs" fullWidth>
+              {productList?.map((val: any, index: number) => (
+                <SelectItem
+                  key={index}
+                  onClick={() => {
+                    setDataInput({
+                      ...dataInput,
+                      product_id: val.id,
+                    });
+                  }}
+                >
+                  {val.name}
+                </SelectItem>
+              ))}
+            </Select>
+            <Input
+              label="Nama Varian"
+              variant="faded"
+              onValueChange={(e) =>
+                setDataInput({
+                  ...dataInput,
+                  name: e,
+                })
+              }
+            />
+            <Input
+              label="Kode"
+              variant="faded"
+              onValueChange={(e) =>
+                setDataInput({
+                  ...dataInput,
+                  code: e,
+                })
+              }
+            />
+            <Input
+              label="Stok"
+              variant="faded"
+              onValueChange={(e) =>
+                setDataInput({
+                  ...dataInput,
+                  qty: e,
+                })
+              }
+            />
+            <Input
+              label="Harga"
+              variant="faded"
+              onValueChange={(e) =>
+                setDataInput({
+                  ...dataInput,
+                  price: e,
+                })
+              }
+            />
           </>
         );
       default:

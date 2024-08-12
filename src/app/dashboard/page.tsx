@@ -9,7 +9,11 @@ import {
 } from "../../../components";
 import React from "react";
 import { useHooks } from "./useHooks";
-import { columns_product, columns_product_category } from "../../../utils/data";
+import {
+  columns_product,
+  columns_product_category,
+  columns_product_variant,
+} from "../../../utils/data";
 
 const Dashboard = () => {
   const {
@@ -41,7 +45,7 @@ const Dashboard = () => {
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
               data={dataProductCategory}
-              columns={columns_product_category}
+              tabId={tabId}
               initialColumn={[
                 "id",
                 "name",
@@ -63,7 +67,7 @@ const Dashboard = () => {
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
               data={dataProduct}
-              columns={columns_product}
+              tabId={tabId}
               initialColumn={[
                 "id",
                 "plu",
@@ -86,19 +90,42 @@ const Dashboard = () => {
               handleAdd={handleAdd}
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
-              data={dataProduct}
-              columns={columns_product}
+              data={dataProductVariant}
+              tabId={tabId}
               initialColumn={[
                 "id",
-                "plu",
+                "product_id",
+                "code",
                 "name",
-                "product_category_id",
+                "qty",
+                "price",
                 "is_active",
                 "created_user",
                 "updated_date",
                 "updated_user",
                 "updated_date",
                 "actions",
+              ]}
+            />
+          </div>
+        );
+      case 4:
+        return (
+          <div className="w-full min-h-screen my-20">
+            <TableComponent
+              data={dataTransaction}
+              tabId={tabId}
+              readOnly={true}
+              initialColumn={[
+                "id",
+                "transaction_no",
+                "total_amount",
+                "active",
+                "is_active",
+                "created_user",
+                "updated_date",
+                "updated_user",
+                "updated_date",
               ]}
             />
           </div>

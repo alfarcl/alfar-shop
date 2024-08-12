@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 export interface IAuthState {
-  auth: boolean;
+  auth: {};
 }
 
 const initialState: IAuthState = {
-  auth: false,
+  auth: {},
 };
 
 export const authSlice = createSlice({

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -22,30 +22,34 @@ import { capitalize } from "../utils/utils";
 import { PlusIcon } from "../public/icon/PlusIcon";
 import { ChevronDownIcon } from "../public/icon/ChevronDownIcon";
 import { SearchIcon } from "../public/icon/SearchIcon";
-
 import { useSelector } from "react-redux";
+import {
+  columns_product,
+  columns_product_category,
+  columns_product_variant,
+  columns_transaction,
+} from "../utils/data";
 
 export default function TableComponent({
-  handleAdd,
-  handleUpdate,
-  handleDelete,
+  handleAdd = () => {},
+  handleUpdate = () => {},
+  handleDelete = () => {},
   data,
-  columns,
-  initialColumn = ["name", "actions"],
+  initialColumn = ["id", "name", "actions"],
+  readOnly = false,
+  tabId = 0,
 }: {
-  handleAdd: () => void;
-  handleUpdate: (id: string, data?: {}) => void;
-  handleDelete: (id: string, data?: {}) => void;
+  handleAdd?: () => void;
+  handleUpdate?: (id: string, data?: {}) => void;
+  handleDelete?: (id: string, data?: {}) => void;
   data: any;
-  columns: any[];
   initialColumn: string[];
+  readOnly?: boolean;
+  tabId: number;
 }) {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
-  );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(initialColumn)
   );
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -54,6 +58,21 @@ export default function TableComponent({
     direction: "ascending",
   });
 
+  const columns = useMemo(() => {
+    switch (tabId) {
+      case 1:
+        return columns_product_category;
+      case 2:
+        return columns_product;
+      case 3:
+        return columns_product_variant;
+      case 4:
+        return columns_transaction;
+      default:
+        break;
+    }
+  }, [tabId]);
+
   const [page, setPage] = React.useState(1);
 
   const { auth }: any = useSelector((state: any) => state.auth);
@@ -61,12 +80,8 @@ export default function TableComponent({
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns?.filter((column: any) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
+    return columns;
+  }, [tabId]);
 
   const filteredItems = React.useMemo(() => {
     let filteredData = data ? [...data] : [];
@@ -99,57 +114,89 @@ export default function TableComponent({
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((data: any, columnKey: React.Key) => {
-    const cellValue = data[columnKey as keyof any];
-    switch (columnKey) {
-      case "is_active":
-        return (
-          <Chip
-            className="capitalize cursor-pointer"
-            color={data.active ? "success" : "danger"}
-            size="sm"
-            variant="flat"
-            onClick={() => {
-              handleUpdate(data?.id, {
-                category_id: data?.id,
-                name: data.name,
-                is_active: !data.active,
-                updated_user: auth.data.name,
-              });
-            }}
-          >
-            {data.active ? "AKTIF" : "NON AKTIF"}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Button
-              isIconOnly
-              size="md"
-              color="danger"
-              variant="shadow"
-              className="px-10"
-              onClick={() => handleDelete(data?.id ?? "")}
+  const renderCell = React.useCallback(
+    (data: any, columnKey: React.Key) => {
+      const cellValue = data[columnKey as keyof any];
+      switch (columnKey) {
+        case "is_active":
+          return (
+            <Chip
+              className="capitalize cursor-pointer"
+              color={data.active ? "success" : "danger"}
+              size="sm"
+              variant="flat"
+              onClick={() => {
+                console.log({ data: data.id });
+                switch (tabId) {
+                  case 1:
+                    handleUpdate(data?.id, {
+                      category_id: data?.id,
+                      name: data.name,
+                      is_active: !data.active,
+                      updated_user: auth.data.name,
+                    });
+                    break;
+                  case 2:
+                    handleUpdate(data?.id, {
+                      product_id: data?.id,
+                      plu: data?.plu,
+                      name: data?.name,
+                      product_category_id: data?.product_category_id,
+                      is_active: !data?.active,
+                      updated_user: auth.data.name,
+                    });
+                    break;
+                  case 3:
+                    handleUpdate(data?.id, {
+                      product_variant_id: data?.id,
+                      product_id: data?.product_id,
+                      code: data?.code,
+                      name: data?.name,
+                      qty: data?.qty,
+                      price: data?.price,
+                      is_active: !data?.active,
+                      updated_user: auth.data.name,
+                    });
+                    break;
+                  default:
+                    break;
+                }
+              }}
             >
-              <p>Hapus</p>
-            </Button>
-            <Button
-              isIconOnly
-              size="md"
-              color="warning"
-              variant="shadow"
-              className="px-10 text-white"
-              onClick={() => handleUpdate(data?.id ?? "")}
-            >
-              <p>Ubah</p>
-            </Button>
-          </div>
-        );
-      default:
-        return cellValue ?? "-";
-    }
-  }, []);
+              {data.active ? "AKTIF" : "NON AKTIF"}
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Button
+                isIconOnly
+                size="md"
+                color="danger"
+                variant="shadow"
+                className="px-10"
+                onClick={() => handleDelete(data?.id ?? "")}
+              >
+                <p>Hapus</p>
+              </Button>
+              <Button
+                isIconOnly
+                size="md"
+                color="warning"
+                variant="shadow"
+                className="px-10 text-white"
+                onClick={() => handleUpdate(data?.id ?? "")}
+              >
+                <p>Ubah</p>
+              </Button>
+            </div>
+          );
+        default:
+          return cellValue ?? "-";
+      }
+    },
+    [tabId]
+  );
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -199,42 +246,20 @@ export default function TableComponent({
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
+            {!readOnly && (
+              <Button
+                color="primary"
+                onClick={() => handleAdd()}
+                endContent={<PlusIcon />}
               >
-                {columns.map((column: any) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Button
-              color="primary"
-              onClick={() => handleAdd()}
-              endContent={<PlusIcon />}
-            >
-              Add New
-            </Button>
+                Add New
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {data.length} data
+            Total {data.length ?? 0} data
           </span>
         </div>
       </div>
@@ -242,7 +267,6 @@ export default function TableComponent({
   }, [
     filterValue,
     statusFilter,
-    visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
     data.length,
@@ -252,11 +276,7 @@ export default function TableComponent({
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+        <span className="w-[30%] text-small text-default-400"></span>
         <Pagination
           isCompact
           showControls

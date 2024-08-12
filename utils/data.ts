@@ -24,6 +24,32 @@ const columns_product = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
+const columns_product_variant = [
+  { name: "ID", uid: "id", sortable: true },
+  { name: "ID PRODUK", uid: "product_id", sortable: true },
+  { name: "KODE PRODUK", uid: "code", sortable: true },
+  { name: "NAMA", uid: "name", sortable: true },
+  { name: "STOK", uid: "qty", sortable: true },
+  { name: "HARGA", uid: "price", sortable: true },
+  { name: "IS ACTIVE", uid: "is_active", sortable: true },
+  { name: "DIBUAT OLEH", uid: "created_user", sortable: true },
+  { name: "DIBUAT PADA", uid: "created_date", sortable: true },
+  { name: "DIUBAH OLEH", uid: "updated_user", sortable: true },
+  { name: "DIUBAH PADA", uid: "updated_date", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
+];
+
+const columns_transaction = [
+  { name: "ID", uid: "id", sortable: true },
+  { name: "NO TRANSAKSI", uid: "transaction_no", sortable: true },
+  { name: "TOTAL", uid: "total_amount", sortable: true },
+  { name: "IS ACTIVE", uid: "is_active", sortable: true },
+  { name: "DIBUAT OLEH", uid: "created_user", sortable: true },
+  { name: "DIBUAT PADA", uid: "created_date", sortable: true },
+  { name: "DIUBAH OLEH", uid: "updated_user", sortable: true },
+  { name: "DIUBAH PADA", uid: "updated_date", sortable: true },
+];
+
 const users = [
   {
     id: 1,
@@ -45,4 +71,10 @@ const users = [
   },
 ];
 
-export { columns_product_category, users, columns_product };
+export {
+  columns_product_category,
+  users,
+  columns_product,
+  columns_product_variant,
+  columns_transaction,
+};

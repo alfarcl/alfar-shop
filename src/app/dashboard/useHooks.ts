@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProductCategory } from "../../../store/productCategorySlice";
+import { setProduct } from "../../../store/productSlice";
 
 export const useHooks = () => {
   const [tabId, setTabId] = useState(0);
@@ -21,11 +22,27 @@ export const useHooks = () => {
     setIsOpenModal(!isOpenModal);
   };
 
-  const handleDelete = (id: string, data?: {}) => {
+  const handleDelete = (id: string) => {
     setChoosedId(id);
-    onSubmit("delete", {
-      category_id: id,
-    });
+    switch (tabId) {
+      case 1:
+        onSubmit("delete", {
+          category_id: id,
+        });
+        break;
+      case 2:
+        onSubmit("delete", {
+          product_id: id,
+        });
+        break;
+      case 3:
+        onSubmit("delete", {
+          product_variant_id: id,
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   const handleUpdate = (id: string, data?: {}) => {
@@ -44,6 +61,9 @@ export const useHooks = () => {
         break;
       case 2:
         handleProcessProduct(type, data);
+        break;
+      case 3:
+        handleProcessProductVariant(type, data);
         break;
       default:
         break;
@@ -120,6 +140,60 @@ export const useHooks = () => {
     }
   };
 
+  const handleProcessProductVariant = async (
+    type: "add" | "update" | "delete",
+    data: any
+  ) => {
+    if (auth.token) {
+      const response = await fetch(
+        `http://localhost:5000/api/product-variant/${type}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.token}`,
+          },
+          body: JSON.stringify(
+            type === "add"
+              ? {
+                  product_id: data.product_id,
+                  code: data.code,
+                  name: data.name,
+                  qty: data.qty,
+                  price: data.price,
+                  is_active: false,
+                  created_user: auth.data.name,
+                }
+              : type === "update"
+              ? {
+                  product_variant_id: data.product_variant_id,
+                  product_id: data.product_id,
+                  code: data.code,
+                  name: data.name,
+                  qty: data.qty,
+                  price: data.price,
+                  is_active: false,
+                  updated_user: auth.data.name,
+                }
+              : {
+                  product_variant_id: data.product_variant_id ?? "",
+                }
+          ),
+        }
+      );
+      const result = await response.json();
+      if (result.message === "Unauthorized") {
+        router.push("/");
+      } else {
+        handleGetProductVarian();
+        setChoosedId("");
+        setIsOpenModal(false);
+      }
+    } else {
+      router.push("/");
+    }
+  };
+
   const handleProcessProduct = async (
     type: "add" | "update" | "delete",
     data: any
@@ -183,6 +257,7 @@ export const useHooks = () => {
       if (result.message === "Unauthorized") {
         router.push("/");
       } else {
+        setDataTransaction(result.payload.data);
       }
     } else {
       router.push("/");
@@ -202,6 +277,8 @@ export const useHooks = () => {
       if (result.message === "Unauthorized") {
         router.push("/");
       } else {
+        handleGetProductCategory();
+        dispatch(setProduct(result.payload.data));
         setDataProduct(result.payload.data);
       }
     } else {
@@ -225,6 +302,8 @@ export const useHooks = () => {
       if (result.message === "Unauthorized") {
         router.push("/");
       } else {
+        handleGetProductData();
+        setDataProductVarian(result.payload.data);
       }
     } else {
       router.push("/");
@@ -240,6 +319,9 @@ export const useHooks = () => {
         handleGetProductData();
         break;
       case 3:
+        handleGetProductVarian();
+        break;
+      case 4:
         handleGetTransactionData();
         break;
       default:
