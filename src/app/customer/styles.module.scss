@@ -1,0 +1,80 @@
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #c9ccda;
+  border-right: 15px solid white;
+  align-items: center;
+  padding-top: 2%;
+}
+
+.content {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5%;
+}
+
+.sidebar-card-button {
+  width: 80%;
+  height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  font-size: 27px;
+  color: white;
+  background-color: #e72929;
+}
+
+.card-image {
+  width: 200px;
+  height: 200px;
+  background-color: #e72929;
+  font-size: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-style: italic;
+  color: bisque;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  min-height: 100px;
+  background-color: #1f316f;
+  padding: 0px 40px;
+  align-items: center;
+  left: 0;
+  font-size: xx-large;
+  font-weight: bolder;
+  color :white;
+  font-style: italic;
+  border-bottom: 10px solid #e72929;
+  width: 100%;
+  justify-content: space-between;
+  z-index: 20; /* Ensure it stays on top of other elements */
+}
+
+.cart-footer {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  min-height: 100px;
+  background-color: #1f316f;
+  padding: 0px 40px;
+  align-items: center;
+  left: 0;
+  font-size: xx-large;
+  font-weight: bolder;
+  color :white;
+  font-style: italic;
+  border-top: 10px solid #e72929;
+  width: 100%;
+  justify-content: space-between;
+  z-index: 20; /* Ensure it stays on top of other elements */
+}

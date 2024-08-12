@@ -1,0 +1,19 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 600px;
+    height: 650px;
+    background-color: white;
+    border-width: 12px;
+    border-radius: 20px;
+    border-color: #f26d6d;
+    align-items: center;
+  }
+  
+  .outer-div {
+    border-width: 12px;
+    border-color: white;
+    border-radius: 20px;
+  }
+  
