@@ -104,7 +104,7 @@ const SideBarComponent = ({
             TRANSACTION
           </Button>
           <Button
-            color={activeButton === 4 ? "warning" : "primary"}
+            color={activeButton === 5 ? "warning" : "primary"}
             onClick={() => {
                 document.cookie = `token=${''};`
                 router.push('/');
