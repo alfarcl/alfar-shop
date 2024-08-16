@@ -6,6 +6,7 @@ import { Input } from "@nextui-org/input";
 import { useState } from "react";
 import { setAuthState } from "../../store/authSlice";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { useFetch } from "../../utils/fetchApi";
 import { PATH_LOGIN } from "../../utils/const";
@@ -27,7 +28,14 @@ const Login = () => {
     })
       .then((response: any) => {
         dispatch(setAuthState(response?.payload));
-        document.cookie = `token=${response?.payload?.token}; account_data=${response?.payload?.data};`;
+        Cookies.set("token", response?.payload?.token ?? "", { expires: 1 });
+        Cookies.set("account_name", response?.payload?.data?.name ?? "", {
+          expires: 1,
+        });
+         Cookies.set("account_id", response?.payload?.data?.id ?? "", {
+          expires: 1,
+        });
+        document.cookie = `token=${response?.payload?.token}; accountName=${response?.payload?.data?.name};`;
         if (response.payload.data.role_id === "R0001") {
           router.push("/dashboard");
         } else {

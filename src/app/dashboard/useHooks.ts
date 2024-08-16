@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProductCategory } from "../../../store/productCategorySlice";
 import { setProduct } from "../../../store/productSlice";
+import Cookies from "js-cookie";
 import { useFetch } from "../../../utils/fetchApi";
 import {
   PATH_ADD_CATEGORY_PRODUCT,
@@ -41,7 +42,6 @@ export const useHooks = () => {
   const [dataTransaction, setDataTransaction] = useState(false);
   const [choosedId, setChoosedId] = useState("");
   const [dataInput, setDataInput] = useState({});
-  const auth: IAuthSelector = useSelector((state: any) => state.auth.auth);
   const dispatch = useDispatch();
   const router = useRouter();
   const { fetchData } = useFetch();
@@ -50,6 +50,7 @@ export const useHooks = () => {
     (state: any) => state.product_category.product_category.data
   );
   const productList = useSelector((state: any) => state.product.product.data);
+  const accountName = Cookies.get("account_name");
 
   const onSubmit = (type: "add" | "update" | "delete", data: any) => {
     switch (tabId) {
@@ -125,14 +126,14 @@ export const useHooks = () => {
           ? {
               name: data?.name ?? "",
               is_active: false,
-              created_user: auth.data.name,
+              created_user: accountName,
             }
           : type === "update"
           ? {
               category_id: data?.id || "",
               name: data?.name ?? "",
               is_active: data.active ?? false,
-              updated_user: auth.data.name,
+              updated_user: accountName,
             }
           : {
               category_id: data?.category_id ?? "",
@@ -170,7 +171,7 @@ export const useHooks = () => {
               name: data?.name,
               product_category_id: data?.product_category_id,
               is_active: false,
-              created_user: auth.data.name,
+              created_user: accountName,
             }
           : type === "update"
           ? {
@@ -179,7 +180,7 @@ export const useHooks = () => {
               name: data?.name,
               product_category_id: data?.product_category_id,
               is_active: data?.active,
-              updated_user: auth.data.name,
+              updated_user: accountName,
             }
           : {
               product_id: data?.product_id ?? "",
@@ -324,7 +325,7 @@ export const useHooks = () => {
     setIsOpenModal,
     isUpdateData,
     setIsUpdateData,
-    auth,
+    accountName,
     dispatch,
     router,
     handleAdd,

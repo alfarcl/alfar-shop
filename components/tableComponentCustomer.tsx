@@ -18,6 +18,7 @@ import { SearchIcon } from "../public/icon/SearchIcon";
 import { useSelector } from "react-redux";
 import { columns_customer } from "../utils/data";
 import { formatRupiah } from "../utils/utils";
+import Cookies from "js-cookie";
 
 export default function TableComponent({
   handleAdd = () => {},
@@ -48,7 +49,7 @@ export default function TableComponent({
 
   const [page, setPage] = React.useState(1);
 
-  const { auth }: any = useSelector((state: any) => state.auth);
+  const accountName = Cookies.get("account_name");
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -99,7 +100,7 @@ export default function TableComponent({
                 category_id: data?.id,
                 name: data.name,
                 is_active: !data.active,
-                updated_user: auth.data.name,
+                updated_user: accountName,
               });
             }}
           >

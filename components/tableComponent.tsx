@@ -29,6 +29,7 @@ import {
   columns_product_variant,
   columns_transaction,
 } from "../utils/data";
+import Cookies from "js-cookie";
 
 export default function TableComponent({
   handleAdd = () => {},
@@ -77,7 +78,7 @@ export default function TableComponent({
 
   const [page, setPage] = React.useState(1);
 
-  const auth: any = useSelector((state: any) => state.auth.auth);
+  const accountName = Cookies.get("account_name");
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -131,7 +132,7 @@ export default function TableComponent({
                 handleUpdateIsActive({
                   ...data,
                   active: !data?.active,
-                  updated_user: auth.data.name,
+                  updated_user: accountName,
                 });
               }}
             >

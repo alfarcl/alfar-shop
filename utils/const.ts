@@ -1,45 +1,45 @@
 //AUTH
-const PATH_LOGIN = "http://localhost:4000/api/auth/login";
-const PATH_REGISTER = "http://localhost:4000/api/auth/register";
+const PATH_LOGIN = "https://alfar-shop-service.vercel.app/api/auth/login";
+const PATH_REGISTER = "https://alfar-shop-service.vercel.app/api/auth/register";
 
 //CATEGORY_PRODUCT
-const PATH_GET_CATEGORY_PRODUCT = "http://localhost:4000/api/product-category";
+const PATH_GET_CATEGORY_PRODUCT = "https://alfar-shop-service.vercel.app/api/product-category";
 const PATH_ADD_CATEGORY_PRODUCT =
-  "http://localhost:4000/api/product-category/add";
+  "https://alfar-shop-service.vercel.app/api/product-category/add";
 const PATH_UPDATE_CATEGORY_PRODUCT =
-  "http://localhost:4000/api/product-category/update";
+  "https://alfar-shop-service.vercel.app/api/product-category/update";
 const PATH_DELETE_CATEGORY_PRODUCT =
-  "http://localhost:4000/api/product-category/delete";
+  "https://alfar-shop-service.vercel.app/api/product-category/delete";
 
 //PRODUCT
-const PATH_GET_PRODUCT = "http://localhost:4000/api/product";
-const PATH_ADD_PRODUCT = "http://localhost:4000/api/product/add";
-const PATH_UPDATE_PRODUCT = "http://localhost:4000/api/product/update";
-const PATH_DELETE_PRODUCT = "http://localhost:4000/api/product/delete";
+const PATH_GET_PRODUCT = "https://alfar-shop-service.vercel.app/api/product";
+const PATH_ADD_PRODUCT = "https://alfar-shop-service.vercel.app/api/product/add";
+const PATH_UPDATE_PRODUCT = "https://alfar-shop-service.vercel.app/api/product/update";
+const PATH_DELETE_PRODUCT = "https://alfar-shop-service.vercel.app/api/product/delete";
 
 //PRODUCT_VARIANT
-const PATH_GET_VARIANT_PRODUCT = "http://localhost:4000/api/product-variant";
+const PATH_GET_VARIANT_PRODUCT = "https://alfar-shop-service.vercel.app/api/product-variant";
 const PATH_ADD_VARIANT_PRODUCT =
-  "http://localhost:4000/api/product-variant/add";
+  "https://alfar-shop-service.vercel.app/api/product-variant/add";
 const PATH_UPDATE_VARIANT_PRODUCT =
-  "http://localhost:4000/api/product-variant/update";
+  "https://alfar-shop-service.vercel.app/api/product-variant/update";
 const PATH_DELETE_VARIANT_PRODUCT =
-  "http://localhost:4000/api/product-variant/delete";
+  "https://alfar-shop-service.vercel.app/api/product-variant/delete";
 
 //CATEGORY_TRANSACTION
-const PATH_GET_TRANSACTION = "http://localhost:4000/api/transaction";
-const PATH_ADD_TRANSACTION = "http://localhost:4000/api/transaction/add";
-const PATH_UPDATE_TRANSACTION = "http://localhost:4000/api/transaction/update";
-const PATH_DELETE_TRANSACTION = "http://localhost:4000/api/transaction/delete";
+const PATH_GET_TRANSACTION = "https://alfar-shop-service.vercel.app/api/transaction";
+const PATH_ADD_TRANSACTION = "https://alfar-shop-service.vercel.app/api/transaction/add";
+const PATH_UPDATE_TRANSACTION = "https://alfar-shop-service.vercel.app/api/transaction/update";
+const PATH_DELETE_TRANSACTION = "https://alfar-shop-service.vercel.app/api/transaction/delete";
 const IMG_URL =
   "https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?cs=srgb&dl=pexels-madebymath-90946.jpg&fm=jpg";
 
 
   //PRODUCT
-const PATH_GET_CART = "http://localhost:4000/api/cart";
-const PATH_ADD_CART = "http://localhost:4000/api/cart/add";
-const PATH_UPDATE_CART = "http://localhost:4000/api/cart/update";
-const PATH_DELETE_CART = "http://localhost:4000/api/cart/delete";
+const PATH_GET_CART = "https://alfar-shop-service.vercel.app/api/cart";
+const PATH_ADD_CART = "https://alfar-shop-service.vercel.app/api/cart/add";
+const PATH_UPDATE_CART = "https://alfar-shop-service.vercel.app/api/cart/update";
+const PATH_DELETE_CART = "https://alfar-shop-service.vercel.app/api/cart/delete";
 
 export {
   // AUTH

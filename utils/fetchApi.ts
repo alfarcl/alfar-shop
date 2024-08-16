@@ -1,9 +1,7 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const useFetch = () => {
-  const token = Cookies.get('token');
+  const token = Cookies.get("token");
 
   const fetchDataAuth = async ({
     path = "",

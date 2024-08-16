@@ -130,7 +130,6 @@ export const useHooks = () => {
   };
 
   useEffect(() => {
-    console.log(tabId)
     switch (tabId) {
       case 1:
         handleGetProductVarian();

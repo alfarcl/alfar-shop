@@ -10,6 +10,7 @@ import {
 import { useFetch } from "../../../utils/fetchApi";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import Cookies from "js-cookie";
 
 export interface IProductVariant {
   id: string;
@@ -50,7 +51,8 @@ const useHook = () => {
   const [showSubmitModal, setShowSubmitModal]: any = useState(false);
   const [choosedData, setChoosedData]: any = useState(null);
   const router = useRouter();
-  const auth: IAuthSelector = useSelector((state: any) => state.auth.auth);
+  const accountName = Cookies.get('account_name');
+  const accountId = Cookies.get('account_id');
   let totalCart: any = useMemo(() => {
     let _val: number = 0;
     cartList?.map((e: any) => (_val += e?.price * e?.qty));
@@ -113,30 +115,7 @@ const useHook = () => {
     } catch (error) {}
   };
 
-  const handleAddCart = async (_data: any) => {
-    try {
-      const response: any = await fetchData({
-        path: PATH_ADD_CART,
-        reqBody: {
-          id: "CRT2",
-          account_id: "AC003",
-          product_variant_id: "PVX001",
-          price: 2650,
-          qty: 88,
-          is_active: true,
-          product_name: "INDOMIE SOTO 2",
-        },
-      });
-
-      if (response.message === "Unauthorized") {
-        router.push("/");
-      } else {
-        handleGetCart();
-      }
-    } catch (error) {}
-  };
-
-  const handleChangeQty = (id_product: string, _qty: number) => {
+  const handleChangeQty = async (id_product: string, _qty: number) => {
     const filteredData: any = productList?.filter(
       (e: any) => e.id == id_product
     );
@@ -145,7 +124,7 @@ const useHook = () => {
     );
     if (_qty < parseInt(filteredData[0].qty)) {
       setProductList(
-        productList?.map((e: IProductVariant) => {
+       await productList?.map((e: IProductVariant) => {
           if (e.id === id_product) {
             return {
               ...e,
@@ -170,8 +149,6 @@ const useHook = () => {
     setIsChoosingProduct(false);
   };
 
-  useEffect(() => {}, [productList]);
-
   const handleClickDetail = (data: IProductVariant) => {
     setChoosedData(data);
     setIsShow(!isShow);
@@ -186,7 +163,7 @@ const useHook = () => {
         const response: any = await fetchData({
           path: PATH_ADD_CART,
           reqBody: {
-            account_id: auth?.data?.id,
+            account_id: accountId,
             product_variant_id: _data?.id,
             price: _data?.price,
             qty: _data?.qtyBuy,
@@ -226,7 +203,7 @@ const useHook = () => {
         reqBody: {
           total_amount: totalCart,
           is_active: false,
-          created_user: auth.data.id,
+          created_user: accountId,
         },
       });
       if (response.message === "Unauthorized") {
@@ -243,10 +220,10 @@ const useHook = () => {
     }
   };
 
-  const handleLogOut = async() => {
-      document.cookie = `token=${''};`
-      router.push('/');
-  }
+  const handleLogOut = async () => {
+    document.cookie = `token=${""};`;
+    router.push("/");
+  };
 
   useEffect(() => {
     handleGetProduct();
@@ -281,7 +258,7 @@ const useHook = () => {
     showSubmitModal,
     toggleShowSubmitModal,
     handleSubmitPurchasing,
-    handleLogOut
+    handleLogOut,
   };
 };
 
