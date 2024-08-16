@@ -31,7 +31,7 @@ export interface IProductVariant {
   created_date: Date;
   updated_user: string;
   updated_date: Date;
-  qtyBuy?: number;
+  qtyBuy: number;
 }
 
 const Customer = () => {

@@ -28,7 +28,6 @@ const Customer = () => {
           <TableComponentCustomer
             data={dataProductVariant}
             initialColumn={[]}
-            tabId={1}
           />
         );
       default:

@@ -28,8 +28,8 @@ export default function ModalAddData({
   isUpdateData?: boolean;
   choosedId: string;
   onSubmit: (type: "add" | "update" | "delete", data: any) => void;
-  dataInput: any;
-  setDataInput: any;
+  dataInput?: any;
+  setDataInput?: any;
 }) {
   const productCategoryList = useSelector(
     (state: any) => state.product_category.product_category

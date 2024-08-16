@@ -4,7 +4,7 @@ import Chart from "chart.js";
 
 export const CardLineChart = () => {
   useEffect(() => {
-    var config = {
+    var config: any = {
       type: "line",
       aspectRatio: 3 / 5,
       data: {
@@ -135,8 +135,12 @@ export const CardLineChart = () => {
         },
       },
     };
-    var ctx = document.getElementById("line-chart").getContext("2d");
-    window.myLine = new Chart(ctx, config);
+    var canvas = document.getElementById("line-chart");
+    if (canvas instanceof HTMLCanvasElement) {
+      var ctx = canvas.getContext("2d");
+    } else {
+      console.error("Element with ID 'line-chart' is not a canvas.");
+    }
   }, []);
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full h-60 mb-6 shadow-lg rounded bg-blueGray-700">

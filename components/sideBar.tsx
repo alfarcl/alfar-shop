@@ -4,7 +4,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
 const SideBarComponent = ({
-  activeButton,
+  activeButton = 1,
   setActiveButton,
   isCustomer,
 }: any) => {
@@ -33,7 +33,7 @@ const SideBarComponent = ({
         </>
       ) : (
         <>
-          <Button
+          {/* <Button
             color={activeButton === 0 ? "warning" : "primary"}
             onClick={() => {
               setActiveButton(0);
@@ -42,11 +42,11 @@ const SideBarComponent = ({
             size="lg"
             className={clsx(
               styles["sidebar-card-button"],
-              "my-5 cursor-pointer w-full mt-10"
+              "my-5 cursor-pointer w-full mt-10 hidden"
             )}
           >
             <p>DASHBOARD</p>
-          </Button>
+          </Button> */}
           <Button
             color={activeButton === 1 ? "warning" : "primary"}
             onClick={() => {

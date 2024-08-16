@@ -33,7 +33,7 @@ export interface IAuthDataSelector {
 }
 
 export const useHooks = () => {
-  const [tabId, setTabId] = useState(0);
+  const [tabId, setTabId] = useState(1);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isUpdateData, setIsUpdateData] = useState(false);
   const [dataProductCategory, setDataProductCategory] = useState([]);
@@ -216,7 +216,7 @@ export const useHooks = () => {
               qty: data.qty,
               price: data.price,
               is_active: false,
-              created_user: auth.data.name,
+              created_user: accountName,
             }
           : type == "update"
           ? {
@@ -227,7 +227,7 @@ export const useHooks = () => {
               qty: data.qty,
               price: data.price,
               is_active: data?.active,
-              updated_user: auth.data.name,
+              updated_user: accountName,
             }
           : {
               product_variant_id: data.product_variant_id ?? "",
