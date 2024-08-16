@@ -10,13 +10,31 @@ import {
 import styles from "./styles.module.scss";
 import clsx from "clsx";
 import Image from "next/image";
+import { formatRupiah } from "../utils/utils";
+
+export interface IProductVariant {
+  id: string;
+  product_id: string;
+  code: string;
+  name: string;
+  qty: string;
+  price: string;
+  active: boolean;
+  created_user: string;
+  created_date: Date;
+  updated_user: string;
+  updated_date: Date;
+  qtyBuy?: number;
+}
 
 export default function ModalDetailProduct({
   isShow,
   toggleShow,
+  data,
 }: {
   isShow: boolean;
   toggleShow: () => void;
+  data: IProductVariant;
 }) {
   return (
     <Modal isOpen={isShow} onOpenChange={toggleShow} placement="top" size="lg">
@@ -37,7 +55,7 @@ export default function ModalDetailProduct({
                   </div>
                 </div>
                 <div className={clsx(styles.description, "mt-10 text-center")}>
-                  <p>KAMERA DIGITAL SECOND</p>
+                  <p className="font-extrabold">DATA DETAIL</p>
                 </div>
                 <div
                   className={clsx(
@@ -45,8 +63,8 @@ export default function ModalDetailProduct({
                     "mt-1 text-center w-full"
                   )}
                 >
-                  <p>PLU :</p>
-                  <p>-</p>
+                  <p className="font-bold">KODE</p>
+                  <p>{data?.code}</p>
                 </div>
                 <div
                   className={clsx(
@@ -54,8 +72,8 @@ export default function ModalDetailProduct({
                     "mt-1 text-center w-full"
                   )}
                 >
-                  <p>Kategori :</p>
-                  <p>-</p>
+                  <p className="font-bold">NAMA PRODUK</p>
+                  <p>{data?.name}</p>
                 </div>
                 <div
                   className={clsx(
@@ -63,8 +81,8 @@ export default function ModalDetailProduct({
                     "mt-1 text-center w-full"
                   )}
                 >
-                  <p>Produk :</p>
-                  <p>-</p>
+                  <p className="font-bold">HARGA</p>
+                  <p>{formatRupiah(parseInt(data?.price))}</p>
                 </div>
                 <div
                   className={clsx(
@@ -72,8 +90,8 @@ export default function ModalDetailProduct({
                     "mt-1 text-center w-full"
                   )}
                 >
-                  <p>Stok :</p>
-                  <p>-</p>
+                  <p className="font-bold">STOK</p>
+                  <p>{data?.qty}</p>
                 </div>
                 <div
                   className={clsx(
@@ -81,26 +99,20 @@ export default function ModalDetailProduct({
                     "mt-1 text-center w-full"
                   )}
                 >
-                  <p>Harga :</p>
-                  <p>Rp 20.000,-</p>
+                  <p className="font-bold">ID PRODUK</p>
+                  <p>{data?.product_id}</p>
                 </div>
               </div>
             </ModalBody>
             <ModalFooter>
-              <div className="w-full flex flex-row gap-2 mb-10 justify-center items-center">
+              <div className="w-full flex flex-row gap-4 mb-10 justify-center items-center py-10">
                 <Button
                   color="warning"
                   variant="shadow"
+                  onClick={() => onClose()}
                   className="cursor-pointer transform transition duration-300 hover:scale-110"
                 >
-                  <p className="text-white font-bold">Tambahkan Ke Keranjang</p>
-                </Button>
-                <Button
-                  color="success"
-                  variant="shadow"
-                  className="cursor-pointer transform transition duration-300 hover:scale-110"
-                >
-                  <p className="text-white font-bold">Pesan Sekarang</p>
+                  <p className="text-white font-bold">Tutup</p>
                 </Button>
               </div>
             </ModalFooter>

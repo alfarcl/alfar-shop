@@ -19,6 +19,8 @@ export default function ModalAddData({
   isUpdateData = false,
   onSubmit,
   choosedId,
+  dataInput,
+  setDataInput,
 }: {
   isOpen: boolean;
   onOpenChange: () => void;
@@ -26,17 +28,13 @@ export default function ModalAddData({
   isUpdateData?: boolean;
   choosedId: string;
   onSubmit: (type: "add" | "update" | "delete", data: any) => void;
+  dataInput: any;
+  setDataInput: any;
 }) {
-  const [dataInput, setDataInput] = useState({});
-  const state = useSelector((state: any) => state);
-  const productCategoryList = useMemo(() => {
-    return state.product_category.product_category.data;
-  }, [state]);
-  const productList = useMemo(() => {
-    return state.product?.product;
-  }, [state]);
-
-  console.log(state.product.product);
+  const productCategoryList = useSelector(
+    (state: any) => state.product_category.product_category
+  );
+  const productList = useSelector((state: any) => state.product.product);
 
   const renderForm = (id: number) => {
     switch (id) {
@@ -45,6 +43,7 @@ export default function ModalAddData({
           <Input
             label="Nama Kategori Produk"
             variant="faded"
+            value={dataInput?.name ?? ""}
             onValueChange={(e) => {
               setDataInput(
                 isUpdateData
@@ -67,6 +66,7 @@ export default function ModalAddData({
             <Input
               label="Kode PLU"
               variant="faded"
+              value={dataInput?.plu ?? ""}
               onValueChange={(e) =>
                 setDataInput({
                   ...dataInput,
@@ -77,6 +77,7 @@ export default function ModalAddData({
             <Input
               label="Nama Produk"
               variant="faded"
+              value={dataInput?.name ?? ""}
               onValueChange={(e) =>
                 setDataInput({
                   ...dataInput,
@@ -84,43 +85,59 @@ export default function ModalAddData({
                 })
               }
             />
-            <Select label="Kategori produk" className="max-w-xs" fullWidth>
-              {productCategoryList?.map((val: any, index: number) => (
-                <SelectItem
-                  key={index}
-                  onClick={() => {
-                    setDataInput({
-                      ...dataInput,
-                      product_category_id: val.id,
-                    });
-                  }}
-                >
-                  {val.name}
-                </SelectItem>
-              ))}
+            <Select
+              label="Kategori produk"
+              defaultSelectedKeys={[dataInput.product_category_id]}
+              className="max-w-xs"
+              fullWidth
+            >
+              {productCategoryList?.map((val: any) => {
+                return (
+                  <SelectItem
+                    key={val.id}
+                    onClick={() => {
+                      setDataInput({
+                        ...dataInput,
+                        product_category_id: val.id,
+                      });
+                    }}
+                  >
+                    {val.name}
+                  </SelectItem>
+                );
+              })}
             </Select>
           </>
         );
       case 3: //produk varian
         return (
           <>
-            <Select label="Produk" className="max-w-xs" fullWidth>
-              {productList?.map((val: any, index: number) => (
-                <SelectItem
-                  key={index}
-                  onClick={() => {
-                    setDataInput({
-                      ...dataInput,
-                      product_id: val.id,
-                    });
-                  }}
-                >
-                  {val.name}
-                </SelectItem>
-              ))}
+            <Select
+              label="Produk"
+              defaultSelectedKeys={[dataInput.product_id]}
+              className="max-w-xs"
+              fullWidth
+            >
+              {productList &&
+                productList?.map((val: any) => {
+                  return (
+                    <SelectItem
+                      key={val.id}
+                      onClick={() => {
+                        setDataInput({
+                          ...dataInput,
+                          product_id: val.id,
+                        });
+                      }}
+                    >
+                      {val.name}
+                    </SelectItem>
+                  );
+                })}
             </Select>
             <Input
               label="Nama Varian"
+              value={dataInput.name ?? ""}
               variant="faded"
               onValueChange={(e) =>
                 setDataInput({
@@ -132,6 +149,7 @@ export default function ModalAddData({
             <Input
               label="Kode"
               variant="faded"
+              value={dataInput.code ?? ""}
               onValueChange={(e) =>
                 setDataInput({
                   ...dataInput,
@@ -142,6 +160,7 @@ export default function ModalAddData({
             <Input
               label="Stok"
               variant="faded"
+              value={dataInput.qty ?? ""}
               onValueChange={(e) =>
                 setDataInput({
                   ...dataInput,
@@ -152,6 +171,7 @@ export default function ModalAddData({
             <Input
               label="Harga"
               variant="faded"
+              value={dataInput.price ?? ""}
               onValueChange={(e) =>
                 setDataInput({
                   ...dataInput,

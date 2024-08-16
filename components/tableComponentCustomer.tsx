@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -9,41 +9,33 @@ import {
   TableCell,
   Input,
   Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Chip,
-  User,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
 } from "@nextui-org/react";
-import { columns, users } from "../utils/data";
-import { capitalize } from "../utils/utils";
-import { PlusIcon } from "../public/icon/PlusIcon";
-import { ChevronDownIcon } from "../public/icon/ChevronDownIcon";
 import { SearchIcon } from "../public/icon/SearchIcon";
-import { VerticalDotsIcon } from "../public/icon/VerticalDotsIcon";
+import { useSelector } from "react-redux";
+import { columns_customer } from "../utils/data";
+import { formatRupiah } from "../utils/utils";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = (typeof users)[0];
-
-export default function App() {
+export default function TableComponent({
+  handleAdd = () => {},
+  handleUpdate = () => {},
+  handleDelete = () => {},
+  data,
+  readOnly = false,
+}: {
+  handleAdd?: () => void;
+  handleUpdate?: (id: string, data?: {}) => void;
+  handleDelete?: (id: string, data?: {}) => void;
+  data: any;
+  initialColumn: string[];
+  readOnly?: boolean;
+}) {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
-  );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -52,29 +44,26 @@ export default function App() {
     direction: "ascending",
   });
 
+  const columns = columns_customer;
+
   const [page, setPage] = React.useState(1);
+
+  const { auth }: any = useSelector((state: any) => state.auth);
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
+  const headerColumns = columns;
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
-
+    let filteredData = data ? [...data] : [];
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
+      filteredData = data.filter((val: any) => {
+        val.name.toLowerCase().includes(filterValue.toLowerCase());
+      });
     }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredData;
+  }, [data, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -86,19 +75,41 @@ export default function App() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: any, b: any) => {
+      const first = a[sortDescriptor.column as keyof any] as number;
+      const second = b[sortDescriptor.column as keyof any] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
-
+  const renderCell = React.useCallback((data: any, columnKey: React.Key) => {
+    const cellValue = data[columnKey as keyof any];
     switch (columnKey) {
+      case "active":
+        return (
+          <Chip
+            className="capitalize cursor-pointer"
+            color={data.active ? "success" : "danger"}
+            size="sm"
+            variant="flat"
+            onClick={() => {
+              handleUpdate(data?.id, {
+                category_id: data?.id,
+                name: data.name,
+                is_active: !data.active,
+                updated_user: auth.data.name,
+              });
+            }}
+          >
+            {data.active ? "AKTIF" : "NON AKTIF"}
+          </Chip>
+        );
+      case "price":
+        return (
+         formatRupiah(cellValue * data?.qty)
+        );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -107,14 +118,15 @@ export default function App() {
               size="md"
               color="danger"
               variant="shadow"
-              className="px-10"
+              className="px-10 text-white"
+              onClick={() => handleDelete(data?.id)}
             >
-              <p>Hapus</p>
+              <p>Batalkan</p>
             </Button>
           </div>
         );
       default:
-        return cellValue;
+        return cellValue ?? "-";
     }
   }, []);
 
@@ -159,45 +171,28 @@ export default function App() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Cari ..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
+          <div className="flex gap-3 mt-10">
+            {!readOnly && (
+              <Button
+                color={data?.length === 0 ? "default" : "success"}
+                disabled={data?.length === 0}
+                className={`${data?.length === 0 ? 'text-gray-600 cursor-not-allowed' : 'text-white'} font-bold`}
+                onClick={() => handleAdd()}
               >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
-              Add New
-            </Button>
+                BAYAR
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {data.length ?? 0} produk
           </span>
         </div>
       </div>
@@ -205,21 +200,16 @@ export default function App() {
   }, [
     filterValue,
     statusFilter,
-    visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    data.length,
     hasSearchFilter,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+        <span className="w-[30%] text-small text-default-400"></span>
         <Pagination
           isCompact
           showControls
@@ -269,7 +259,7 @@ export default function App() {
       onSortChange={setSortDescriptor}
     >
       <TableHeader columns={headerColumns}>
-        {(column) => (
+        {(column: any) => (
           <TableColumn
             key={column.uid}
             align={column.uid === "actions" ? "center" : "start"}
@@ -279,7 +269,7 @@ export default function App() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"Data tidak ditemukan"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

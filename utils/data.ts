@@ -50,6 +50,14 @@ const columns_transaction = [
   { name: "DIUBAH PADA", uid: "updated_date", sortable: true },
 ];
 
+const columns_customer = [
+  { name: "ID PRODUK", uid: "product_variant_id", sortable: true },
+  { name: "NAMA PRODUK", uid: "product_name", sortable: true },
+  { name: "JUMLAH", uid: "qty", sortable: true },
+  { name: "TOTAL", uid: "price", sortable: true },
+  { name: "", uid: "actions" },
+];
+
 const users = [
   {
     id: 1,
@@ -71,10 +79,15 @@ const users = [
   },
 ];
 
+const dummyImage =
+  "https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?cs=srgb&dl=pexels-madebymath-90946.jpg&fm=jpg";
+
 export {
   columns_product_category,
   users,
   columns_product,
   columns_product_variant,
   columns_transaction,
+  columns_customer,
+  dummyImage,
 };

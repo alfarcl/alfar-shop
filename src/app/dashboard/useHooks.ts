@@ -3,6 +3,33 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProductCategory } from "../../../store/productCategorySlice";
 import { setProduct } from "../../../store/productSlice";
+import { useFetch } from "../../../utils/fetchApi";
+import {
+  PATH_ADD_CATEGORY_PRODUCT,
+  PATH_ADD_PRODUCT,
+  PATH_ADD_VARIANT_PRODUCT,
+  PATH_DELETE_CATEGORY_PRODUCT,
+  PATH_DELETE_PRODUCT,
+  PATH_DELETE_VARIANT_PRODUCT,
+  PATH_GET_CATEGORY_PRODUCT,
+  PATH_GET_PRODUCT,
+  PATH_GET_TRANSACTION,
+  PATH_GET_VARIANT_PRODUCT,
+  PATH_UPDATE_CATEGORY_PRODUCT,
+  PATH_UPDATE_PRODUCT,
+  PATH_UPDATE_VARIANT_PRODUCT,
+} from "../../../utils/const";
+
+export interface IAuthSelector {
+  token: string;
+  data: IAuthDataSelector;
+}
+
+export interface IAuthDataSelector {
+  id: string;
+  name: string;
+  role_id: string;
+}
 
 export const useHooks = () => {
   const [tabId, setTabId] = useState(0);
@@ -13,11 +40,35 @@ export const useHooks = () => {
   const [dataProductVariant, setDataProductVarian] = useState(false);
   const [dataTransaction, setDataTransaction] = useState(false);
   const [choosedId, setChoosedId] = useState("");
-  const { auth }: any = useSelector((state: any) => state.auth);
+  const [dataInput, setDataInput] = useState({});
+  const auth: IAuthSelector = useSelector((state: any) => state.auth.auth);
   const dispatch = useDispatch();
   const router = useRouter();
+  const { fetchData } = useFetch();
+
+  const productCategoryList = useSelector(
+    (state: any) => state.product_category.product_category.data
+  );
+  const productList = useSelector((state: any) => state.product.product.data);
+
+  const onSubmit = (type: "add" | "update" | "delete", data: any) => {
+    switch (tabId) {
+      case 1:
+        handleProcessProductCategory(type, data);
+        break;
+      case 2:
+        handleProcessProduct(type, data);
+        break;
+      case 3:
+        handleProcessProductVariant(type, data);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleAdd = () => {
+    setDataInput({});
     setIsUpdateData(false);
     setIsOpenModal(!isOpenModal);
   };
@@ -46,268 +97,205 @@ export const useHooks = () => {
   };
 
   const handleUpdate = (id: string, data?: {}) => {
-    if (data) {
-      onSubmit("update", data);
-    }
+    setDataInput({
+      ...data,
+    });
     setChoosedId(id);
     setIsUpdateData(true);
     setIsOpenModal(!isOpenModal);
   };
 
-  const onSubmit = (type: "add" | "update" | "delete", data: any) => {
-    switch (tabId) {
-      case 1:
-        handleProcessProductCategory(type, data);
-        break;
-      case 2:
-        handleProcessProduct(type, data);
-        break;
-      case 3:
-        handleProcessProductVariant(type, data);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleGetProductCategory = async () => {
-    if (auth.token) {
-      const response = await fetch(
-        "http://localhost:5000/api/product-category",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
-        router.push("/");
-      } else {
-        setDataProductCategory(result.payload.data);
-        dispatch(setProductCategory(result.payload));
-      }
-    } else {
-      router.push("/");
-    }
+  const handleUpdateIsActive = (data: {}) => {
+    onSubmit("update", data);
   };
 
   const handleProcessProductCategory = async (
     type: "add" | "update" | "delete",
     data: any
   ) => {
-    if (auth.token) {
-      const response = await fetch(
-        `http://localhost:5000/api/product-category/${type}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.token}`,
-          },
-          body: JSON.stringify(
-            type === "add"
-              ? {
-                  name: data?.name ?? "",
-                  is_active: false,
-                  created_user: auth.data.name,
-                }
-              : type === "update"
-              ? {
-                  category_id: data?.category_id ?? "",
-                  name: data?.name ?? "",
-                  is_active: data?.is_active ?? false,
-                  updated_user: auth.data.name,
-                }
-              : {
-                  category_id: data?.category_id ?? "",
-                }
-          ),
+    await fetchData({
+      path:
+        type === "add"
+          ? PATH_ADD_CATEGORY_PRODUCT
+          : type === "update"
+          ? PATH_UPDATE_CATEGORY_PRODUCT
+          : PATH_DELETE_CATEGORY_PRODUCT,
+      reqBody:
+        type === "add"
+          ? {
+              name: data?.name ?? "",
+              is_active: false,
+              created_user: auth.data.name,
+            }
+          : type === "update"
+          ? {
+              category_id: data?.id || "",
+              name: data?.name ?? "",
+              is_active: data.active ?? false,
+              updated_user: auth.data.name,
+            }
+          : {
+              category_id: data?.category_id ?? "",
+            },
+    })
+      .then((response: any) => {
+        if (response.message === "Unauthorized") {
+          router.push("/");
+        } else {
+          handleGetProductCategory();
+          setChoosedId("");
+          setIsOpenModal(false);
         }
-      );
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
-        router.push("/");
-      } else {
-        handleGetProductCategory();
-        setChoosedId("");
-        setIsOpenModal(false);
-      }
-    } else {
-      router.push("/");
-    }
-  };
-
-  const handleProcessProductVariant = async (
-    type: "add" | "update" | "delete",
-    data: any
-  ) => {
-    if (auth.token) {
-      const response = await fetch(
-        `http://localhost:5000/api/product-variant/${type}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.token}`,
-          },
-          body: JSON.stringify(
-            type === "add"
-              ? {
-                  product_id: data.product_id,
-                  code: data.code,
-                  name: data.name,
-                  qty: data.qty,
-                  price: data.price,
-                  is_active: false,
-                  created_user: auth.data.name,
-                }
-              : type === "update"
-              ? {
-                  product_variant_id: data.product_variant_id,
-                  product_id: data.product_id,
-                  code: data.code,
-                  name: data.name,
-                  qty: data.qty,
-                  price: data.price,
-                  is_active: false,
-                  updated_user: auth.data.name,
-                }
-              : {
-                  product_variant_id: data.product_variant_id ?? "",
-                }
-          ),
-        }
-      );
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
-        router.push("/");
-      } else {
-        handleGetProductVarian();
-        setChoosedId("");
-        setIsOpenModal(false);
-      }
-    } else {
-      router.push("/");
-    }
+      })
+      .catch((err) => {
+        console.log({ err: err });
+      });
   };
 
   const handleProcessProduct = async (
     type: "add" | "update" | "delete",
     data: any
   ) => {
-    if (auth.token) {
-      const response = await fetch(
-        `http://localhost:5000/api/product/${type}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.token}`,
-          },
-          body: JSON.stringify(
-            type === "add"
-              ? {
-                  plu: data?.plu,
-                  name: data?.name,
-                  product_category_id: data?.product_category_id,
-                  is_active: false,
-                  created_user: auth.data.name,
-                }
-              : type === "update"
-              ? {
-                  product_id: choosedId,
-                  plu: data?.plu,
-                  name: data?.name,
-                  product_category_id: data?.product_category_id,
-                  is_active: false,
-                  updated_user: auth.data.name,
-                }
-              : {
-                  product_id: data?.product_id ?? "",
-                }
-          ),
-        }
-      );
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
+    await fetchData({
+      path:
+        type === "add"
+          ? PATH_ADD_PRODUCT
+          : type === "update"
+          ? PATH_UPDATE_PRODUCT
+          : PATH_DELETE_PRODUCT,
+      reqBody:
+        type === "add"
+          ? {
+              plu: data?.plu,
+              name: data?.name,
+              product_category_id: data?.product_category_id,
+              is_active: false,
+              created_user: auth.data.name,
+            }
+          : type === "update"
+          ? {
+              product_id: data?.id,
+              plu: data?.plu,
+              name: data?.name,
+              product_category_id: data?.product_category_id,
+              is_active: data?.active,
+              updated_user: auth.data.name,
+            }
+          : {
+              product_id: data?.product_id ?? "",
+            },
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
         router.push("/");
       } else {
         handleGetProductData();
         setChoosedId("");
         setIsOpenModal(false);
       }
-    } else {
-      router.push("/");
-    }
+    });
   };
 
-  const handleGetTransactionData = async () => {
-    if (auth.token) {
-      const response = await fetch("http://localhost:5000/api/transaction", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
-        },
-      });
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
+  const handleProcessProductVariant = async (
+    type: "add" | "update" | "delete",
+    data: any
+  ) => {
+    await fetchData({
+      path:
+        type === "add"
+          ? PATH_ADD_VARIANT_PRODUCT
+          : type === "update"
+          ? PATH_UPDATE_VARIANT_PRODUCT
+          : PATH_DELETE_VARIANT_PRODUCT,
+      reqBody:
+        type === "add"
+          ? {
+              product_id: data.product_id,
+              code: data.code,
+              name: data.name,
+              qty: data.qty,
+              price: data.price,
+              is_active: false,
+              created_user: auth.data.name,
+            }
+          : type == "update"
+          ? {
+              product_variant_id: data.id,
+              product_id: data.product_id,
+              code: data.code,
+              name: data.name,
+              qty: data.qty,
+              price: data.price,
+              is_active: data?.active,
+              updated_user: auth.data.name,
+            }
+          : {
+              product_variant_id: data.product_variant_id ?? "",
+            },
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
         router.push("/");
       } else {
-        setDataTransaction(result.payload.data);
+        handleGetProductVarian();
+        setChoosedId("");
+        setIsOpenModal(false);
       }
-    } else {
-      router.push("/");
-    }
+    });
+  };
+
+  const handleGetProductCategory = async () => {
+    await fetchData({
+      path: PATH_GET_CATEGORY_PRODUCT,
+      method: "GET",
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
+        router.push("/");
+      } else {
+        setDataProductCategory(response.payload.data);
+        dispatch(setProductCategory(response.payload.data));
+      }
+    });
   };
 
   const handleGetProductData = async () => {
-    if (auth.token) {
-      const response = await fetch("http://localhost:5000/api/product", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
-        },
-      });
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
+    await fetchData({
+      path: PATH_GET_PRODUCT,
+      method: "GET",
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
         router.push("/");
       } else {
         handleGetProductCategory();
-        dispatch(setProduct(result.payload.data));
-        setDataProduct(result.payload.data);
+        dispatch(setProduct(response.payload.data));
+        setDataProduct(response.payload.data);
       }
-    } else {
-      router.push("/");
-    }
+    });
   };
 
   const handleGetProductVarian = async () => {
-    if (auth.token) {
-      const response = await fetch(
-        "http://localhost:5000/api/product-variant",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      if (result.message === "Unauthorized") {
+    await fetchData({
+      path: PATH_GET_VARIANT_PRODUCT,
+      method: "GET",
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
         router.push("/");
       } else {
         handleGetProductData();
-        setDataProductVarian(result.payload.data);
+        setDataProductVarian(response.payload.data);
       }
-    } else {
-      router.push("/");
-    }
+    });
+  };
+
+  const handleGetTransactionData = async () => {
+    await fetchData({
+      path: PATH_GET_TRANSACTION,
+      method: "GET",
+    }).then((response: any) => {
+      if (response.message === "Unauthorized") {
+        router.push("/");
+      } else {
+        setDataTransaction(response.payload.data);
+      }
+    });
   };
 
   useEffect(() => {
@@ -352,5 +340,8 @@ export const useHooks = () => {
     dataTransaction,
     choosedId,
     handleDelete,
+    dataInput,
+    setDataInput,
+    handleUpdateIsActive,
   };
 };

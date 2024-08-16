@@ -1,0 +1,27 @@
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #c9ccda;
+  border-right: 15px solid white;
+  align-items: center;
+  padding-top: 2%;
+}
+
+.content {
+  background-color: black;
+  display: flex;
+  align-items: center;
+  border-left: 15px solid #e72929;
+}
+
+.sidebar-card-button {
+  width: 80%;
+  height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  font-size: 27px;
+  color: white;
+  background-color: #e72929;
+}

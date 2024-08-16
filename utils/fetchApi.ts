@@ -1,26 +1,72 @@
-import { useCallback } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
+import Cookies from 'js-cookie';
 
-export const useFetch = async (url: string) => {
-  const { auth } = useSelector((state: any) => state.auth);
-  const hitApi: any = useCallback(
-    async (reqPayload: any) => {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
-        },
-        body: JSON.stringify(reqPayload),
-      });
+const useFetch = () => {
+  const token = Cookies.get('token');
+
+  const fetchDataAuth = async ({
+    path = "",
+    reqBody,
+    method = "POST",
+    reqHeaders = {
+      "Content-Type": "application/json",
     },
-    [auth.token, url]
-  );
+  }: {
+    path: string;
+    reqBody?: {};
+    method?: "GET" | "POST";
+    reqHeaders?: {};
+  }) => {
+    return new Promise(async (resolve, reject) => {
+      await fetch(path, {
+        method: method,
+        headers: reqHeaders,
+        body: JSON.stringify(reqBody),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 
-  const data = await hitApi.json();
-
+  const fetchData = async ({
+    path = "",
+    reqBody,
+    method = "POST",
+    reqHeaders = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }: {
+    path: string;
+    reqBody?: {};
+    method?: "GET" | "POST";
+    reqHeaders?: {};
+  }) => {
+    return new Promise(async (resolve, reject) => {
+      await fetch(path, {
+        method: method,
+        headers: reqHeaders,
+        body: JSON.stringify(reqBody),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   return {
-    function: hitApi,
-    data,
+    fetchData,
+    fetchDataAuth,
   };
 };
+
+export { useFetch };

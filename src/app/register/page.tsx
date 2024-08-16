@@ -1,31 +1,33 @@
 "use client";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import styles from "./styles.module.scss";
 import { Input } from "@nextui-org/input";
 import { useState } from "react";
-import { useAppDispatch } from "../store";
-
-const datas = [{ name: "hasbi" }, { name: "tiwi" }, { name: "reza" }];
+import { useRouter } from "next/navigation";
+import { PATH_REGISTER } from "../../../utils/const";
+import { useFetch } from "../../../utils/fetchApi";
 
 const Register = () => {
+  const router = useRouter();
   const [data, setData] = useState({
     nama: "",
     password: "",
   });
-  const dispatch = useAppDispatch();
+  const { fetchDataAuth } = useFetch();
 
   const handleRegister = async () => {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    await fetchDataAuth({
+      path: PATH_REGISTER,
+      reqBody: {
         name: data.nama,
         password: data.password,
-        role_id: 'R0002'
-      }),
-    });
+        role_id: "R0002",
+      },
+    })
+      .then((res: any) => {
+        router.push("/");
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <main className="flex min-h-screen flex-row items-center justify-center p-24 bg-[#f26d6d]">
@@ -69,10 +71,13 @@ const Register = () => {
               fullWidth
               className="mt-10"
             >
-              Login
+              Register
             </Button>
           </div>
-          <a href="/" className="mt-4">
+          <a
+            href="/"
+            className="mt-4 text-sm font-bold text-[#f26d6d] hover:text-gray-600"
+          >
             LOGIN
           </a>
         </div>

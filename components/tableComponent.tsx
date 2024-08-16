@@ -34,6 +34,7 @@ export default function TableComponent({
   handleAdd = () => {},
   handleUpdate = () => {},
   handleDelete = () => {},
+  handleUpdateIsActive = () => {},
   data,
   initialColumn = ["id", "name", "actions"],
   readOnly = false,
@@ -42,6 +43,7 @@ export default function TableComponent({
   handleAdd?: () => void;
   handleUpdate?: (id: string, data?: {}) => void;
   handleDelete?: (id: string, data?: {}) => void;
+  handleUpdateIsActive?: (data: {}) => void;
   data: any;
   initialColumn: string[];
   readOnly?: boolean;
@@ -75,7 +77,7 @@ export default function TableComponent({
 
   const [page, setPage] = React.useState(1);
 
-  const { auth }: any = useSelector((state: any) => state.auth);
+  const auth: any = useSelector((state: any) => state.auth.auth);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -121,46 +123,16 @@ export default function TableComponent({
         case "is_active":
           return (
             <Chip
-              className="capitalize cursor-pointer"
-              color={data.active ? "success" : "danger"}
+              className="capitalize cursor-pointer z-auto"
+              color={data?.active ? "success" : "danger"}
               size="sm"
               variant="flat"
               onClick={() => {
-                console.log({ data: data.id });
-                switch (tabId) {
-                  case 1:
-                    handleUpdate(data?.id, {
-                      category_id: data?.id,
-                      name: data.name,
-                      is_active: !data.active,
-                      updated_user: auth.data.name,
-                    });
-                    break;
-                  case 2:
-                    handleUpdate(data?.id, {
-                      product_id: data?.id,
-                      plu: data?.plu,
-                      name: data?.name,
-                      product_category_id: data?.product_category_id,
-                      is_active: !data?.active,
-                      updated_user: auth.data.name,
-                    });
-                    break;
-                  case 3:
-                    handleUpdate(data?.id, {
-                      product_variant_id: data?.id,
-                      product_id: data?.product_id,
-                      code: data?.code,
-                      name: data?.name,
-                      qty: data?.qty,
-                      price: data?.price,
-                      is_active: !data?.active,
-                      updated_user: auth.data.name,
-                    });
-                    break;
-                  default:
-                    break;
-                }
+                handleUpdateIsActive({
+                  ...data,
+                  active: !data?.active,
+                  updated_user: auth.data.name,
+                });
               }}
             >
               {data.active ? "AKTIF" : "NON AKTIF"}
@@ -185,7 +157,7 @@ export default function TableComponent({
                 color="warning"
                 variant="shadow"
                 className="px-10 text-white"
-                onClick={() => handleUpdate(data?.id ?? "")}
+                onClick={() => handleUpdate(data?.id ?? "", data)}
               >
                 <p>Ubah</p>
               </Button>

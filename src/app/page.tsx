@@ -4,37 +4,37 @@ import { Button } from "@nextui-org/react";
 import styles from "./styles.module.scss";
 import { Input } from "@nextui-org/input";
 import { useState } from "react";
-import { useAppDispatch } from "./store";
 import { setAuthState } from "../../store/authSlice";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
+import { useFetch } from "../../utils/fetchApi";
+import { PATH_LOGIN } from "../../utils/const";
 
 const Login = () => {
   const [accountName, setAccountName] = useState("");
   const [accountPassword, setAccountPassword] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
+  const { fetchDataAuth } = useFetch();
 
   const handleLogin = async () => {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchDataAuth({
+      path: PATH_LOGIN,
+      reqBody: {
         name: accountName,
         password: accountPassword,
-      }),
-    });
-    const result = await response.json();
-    console.log(result)
-    dispatch(setAuthState(result.payload));
-    if (result.payload.data.role_id === 'R0001') {
-      router.push('/dashboard')
-    } else {
-      router.push('/customer')
-    }
-  
+      },
+    })
+      .then((response: any) => {
+        dispatch(setAuthState(response?.payload));
+        document.cookie = `token=${response?.payload?.token}; account_data=${response?.payload?.data};`;
+        if (response.payload.data.role_id === "R0001") {
+          router.push("/dashboard");
+        } else {
+          router.push("/customer");
+        }
+      })
+      .catch((err) => console.log({ error: err }));
   };
 
   return (
@@ -73,7 +73,10 @@ const Login = () => {
             </Button>
           </div>
 
-          <a href="/register" className="mt-4 text-xs font-semibold">
+          <a
+            href="/register"
+            className="mt-4 text-sm font-bold text-[#f26d6d] hover:text-gray-600"
+          >
             REGISTER
           </a>
         </div>

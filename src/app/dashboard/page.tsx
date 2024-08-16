@@ -31,6 +31,9 @@ const Dashboard = () => {
     dataProduct,
     choosedId,
     handleDelete,
+    dataInput,
+    setDataInput,
+    handleUpdateIsActive,
   } = useHooks();
 
   const renderTabContent = () => {
@@ -44,6 +47,7 @@ const Dashboard = () => {
               handleAdd={handleAdd}
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
+              handleUpdateIsActive={handleUpdateIsActive}
               data={dataProductCategory}
               tabId={tabId}
               initialColumn={[
@@ -66,6 +70,7 @@ const Dashboard = () => {
               handleAdd={handleAdd}
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
+              handleUpdateIsActive={handleUpdateIsActive}
               data={dataProduct}
               tabId={tabId}
               initialColumn={[
@@ -90,6 +95,7 @@ const Dashboard = () => {
               handleAdd={handleAdd}
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
+              handleUpdateIsActive={handleUpdateIsActive}
               data={dataProductVariant}
               tabId={tabId}
               initialColumn={[
@@ -146,6 +152,8 @@ const Dashboard = () => {
           onSubmit={onSubmit}
           choosedId={choosedId}
           onOpenChange={() => setIsOpenModal(!isOpenModal)}
+          dataInput={dataInput}
+          setDataInput={setDataInput}
         />
       </div>
     </main>
